@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.aloha.board.mapper.BoardMapper">
+
+  <select id="list" resultType="Board">
+    SELECT * FROM board ORDER BY created_at DESC
+  </select>
+
+  <select id="select" resultType="Board">
+    SELECT * FROM board WHERE no = #{no}
+  </select>
+
+  <select id="selectById" resultType="Board">
+    SELECT * FROM board WHERE id = #{id}
+  </select>
+
+  <insert id="insert">
+    INSERT INTO board (id, title, writer, content)
+    VALUES (#{id}, #{title}, #{writer}, #{content})
+  </insert>
+
+  <update id="update">
+    UPDATE board
+    <set>
+      <if test="title != null">
+        title = #{title},
+      </if>
+      <if test="writer != null">
+        writer = #{writer},
+      </if>
+      <if test="content != null">
+        content = #{content},
+      </if>
+    </set>
+    WHERE no = #{no}
+  </update>
+
+  <update id="updateById">
+    UPDATE board
+    <set>
+      <if test="title != null">
+        title = #{title},
+      </if>
+      <if test="writer != null">
+        writer = #{writer},
+      </if>
+      <if test="content != null">
+        content = #{content},
+      </if>
+    </set>
+    WHERE id = #{id}
+  </update>
+
+  <delete id="delete">
+    DELETE FROM board WHERE no = #{no}
+  </delete>
+
+  <delete id="deleteById">
+    DELETE FROM board WHERE id = #{id}
+  </delete>
+</mapper>

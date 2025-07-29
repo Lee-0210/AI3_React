@@ -109,4 +109,30 @@ public class TodoController {
       }
   }
 
+  @DeleteMapping("/all")
+  public ResponseEntity<?> destroyAll() {
+    try {
+      boolean result = todoService.deleteAll();
+      if(result)
+        return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
+      else
+        return new ResponseEntity<>("FAIL", HttpStatus.BAD_REQUEST);
+    } catch (Exception e) {
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @PutMapping("/all")
+  public ResponseEntity<?> updateAll() {
+    try {
+      boolean result = todoService.completeAll();
+      if(result)
+        return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
+      else
+        return new ResponseEntity<>("FAIL", HttpStatus.BAD_REQUEST);
+    } catch (Exception e) {
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
 }

@@ -1,11 +1,11 @@
 import React from 'react'
 
-const Input = () => {
+const Input = ({input, onChange, onSubmit}) => {
   return (
     <div>
-      <form className="form">
-        <input type="text" name="" id="" placeholder="할 일 입력"
-        className="input" value=""/>
+      <form onSubmit={onSubmit} className="form">
+        <input value={input} type="text" name="" id="" placeholder="할 일 입력"
+        className="input" onChange={onChange} />
         <button type="submit" className="btn">추가</button>
       </form>
     </div>

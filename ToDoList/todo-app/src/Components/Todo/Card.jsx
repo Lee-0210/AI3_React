@@ -1,6 +1,6 @@
 import {useState} from 'react'
 
-const Card = ({todo, onToggle}) => {
+const Card = ({todo, onToggle, onRemove, page}) => {
   // state
   // const [status, setStatus] = useState(todo.status)
 
@@ -12,17 +12,16 @@ const Card = ({todo, onToggle}) => {
   //   const newStatus = e.target.checked
   //   setStatus(newStatus)
   // }
-
   return (
     <li className={isActive}>
       <div className="item">
         <input type="checkbox" id={id} checked={status}
-                onChange={() => onToggle(todo)}/>
+                onChange={() => onToggle(todo, page * 10)}/>
         <label htmlFor={id}></label>
         <span>{name}</span>
       </div>
       <div className="item">
-        <button className="btn">삭제</button>
+        <button onClick={() => onRemove(id)} className="btn">삭제</button>
       </div>
     </li>
   )
