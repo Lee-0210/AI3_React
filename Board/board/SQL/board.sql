@@ -10,3 +10,6 @@ CREATE TABLE `board` (
 	`created_at`	TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP	COMMENT '등록일자',
 	`updated_at`	TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP	COMMENT '수정일자'
 ) COMMENT '게시판';
+
+INSERT INTO board (id, title, writer, content)
+SELECT UUID(), 'title', 'writer', 'content';

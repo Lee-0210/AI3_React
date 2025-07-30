@@ -82,7 +82,7 @@ public class BoardController {
         }
     }
 
-    @PutMapping("{id}")
+    @PutMapping("")
     public ResponseEntity<?> update(
         @RequestBody Board board
         ) {
