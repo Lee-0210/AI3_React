@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aloha.board.domain.Board;
+import com.aloha.board.domain.File;
 import com.aloha.board.domain.Pagination;
 import com.aloha.board.service.BoardService;
+import com.aloha.board.service.FileService;
 import com.github.pagehelper.PageInfo;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +34,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/boards")
 public class BoardController {
 
-    @Autowired
-    BoardService boardService;
+    @Autowired private BoardService boardService;
+    @Autowired private FileService fileService;
 
     @GetMapping()
     public ResponseEntity<?> getAll(
@@ -51,25 +54,36 @@ public class BoardController {
             response.put("pagination", pagination);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getOne(@PathVariable("id") String id) {
+    public ResponseEntity<?> find(@PathVariable("id") String id) {
         try {
             Board board = boardService.selectById(id);
-            if(board != null)
-                return new ResponseEntity<>(board, HttpStatus.OK);
-            else
-                return new ResponseEntity<>(board, HttpStatus.BAD_REQUEST);
+            Map<String, Object> response = new HashMap<>();
+            // 파일 목록
+            File file = new File();
+            file.setParentTable("board");
+            file.setParentNo(board.getNo());
+            List<File> fileList = fileService.listByParent(file);
+            response.put("board", board);
+            response.put("fileList", fileList);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PostMapping()
-    public ResponseEntity<?> create(@RequestBody Board board) {
+    /**
+     * @RequestBody 붙일 때 안 붙일 때 차이
+     * - @RequestBody ⭕ : application/json, application/xml
+     * - @RequestBody ❌ : multipart/form-data, application/x-www-form-urlecncoded
+     */
+    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> createFormData(Board board) {
         try {
             boolean result = boardService.insert(board);
             if(result)
@@ -82,8 +96,37 @@ public class BoardController {
         }
     }
 
-    @PutMapping("")
-    public ResponseEntity<?> update(
+    @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createJSON(@RequestBody Board board) {
+        try {
+            boolean result = boardService.insert(board);
+            if(result)
+                return new ResponseEntity<>("게시글 생성 성공", HttpStatus.OK);
+            else
+                return new ResponseEntity<>("게시글 생성 실패", HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateFormData(
+        @RequestBody Board board
+        ) {
+        try {
+            boolean result = boardService.updateById(board);
+            if(result)
+                return new ResponseEntity<>("게시글 수정 성공", HttpStatus.OK);
+            else
+                return new ResponseEntity<>("게시글 수정 실패", HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateJSON(
         @RequestBody Board board
         ) {
         try {

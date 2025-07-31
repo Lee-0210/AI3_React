@@ -4,7 +4,30 @@
 
 <mapper namespace="com.aloha.board.mapper.BoardMapper">
 
-  <select id="list" resultType="Board">
+  <!-- TODO: BoardMap -->
+  <resultMap type="Board" id="BoardMap">
+    <id property="no" column="no"/>
+    <result property="no" column="no"/>
+    <result property="id" column="id"/>
+    <result property="title" column="title"/>
+    <result property="writer" column="writer"/>
+    <result property="content" column="content"/>
+    <result property="createdAt" column="created_at"/>
+    <result property="updatedAt" column="updated_at"/>
+
+    <association property="file" column="no" javaType="File" select="selectMainFile"></association>
+  </resultMap>
+
+  <!-- 메인(썸네일) 파일 조회 -->
+  <select id="selectMainFile" resultType="File">
+    SELECT *
+    FROM file
+    WHERE parent_no = #{no}
+      AND parent_table = 'board'
+      AND type = 'MAIN'
+  </select>
+
+  <select id="list" resultMap="BoardMap">
     SELECT * FROM board ORDER BY created_at DESC
   </select>
 
@@ -16,7 +39,8 @@
     SELECT * FROM board WHERE id = #{id}
   </select>
 
-  <insert id="insert">
+  <!-- 자동증가된(AI) board 의 no 를 Board 객체의 no 변수에 넣어준다. -->
+  <insert id="insert" useGeneratedKeys="true" keyProperty="no">
     INSERT INTO board (id, title, writer, content)
     VALUES (#{id}, #{title}, #{writer}, #{content})
   </insert>

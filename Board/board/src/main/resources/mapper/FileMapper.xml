@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace="매퍼 인터페이스 경로" -->
+<mapper namespace="com.aloha.board.mapper.FileMapper">
+
+    <!-- 파일 목록 -->
+    <select id="list" resultType="File">
+        SELECT *
+        FROM file
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 파일 목록 - 부모 테이블 기준 -->
+    <!-- * 파일이 종속되는 테이블을 기준으로 파일 목록을 조회 -->
+    <!-- * 게시글 번호 10
+          📄 파일 번호 1
+          📄 파일 번호 2
+          📄 파일 번호 3
+    -->
+    <select id="listByParent" resultType="File">
+        SELECT *
+        FROM file
+        WHERE parent_table = #{parentTable}
+          AND parent_no = #{parentNo}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 파일 조회 -->
+    <select id="select" resultType="File">
+        SELECT *
+        FROM file
+        WHERE no = #{no}
+    </select>
+
+    <!-- 파일 조회(ID) -->
+    <select id="selectById" resultType="File">
+        SELECT *
+        FROM file
+        WHERE id = #{id}
+    </select>
+
+    <!-- 파일 등록 -->
+    <insert id="insert">
+        INSERT INTO file(
+          id, parent_table, parent_no, file_name, origin_name,
+          file_path, file_size, type, seq )
+        VALUES (
+          #{id}, #{parentTable}, #{parentNo}, #{fileName}, #{originName},
+          #{filePath}, #{fileSize}, #{type}, #{seq} )
+    </insert>
+
+    <!-- 파일 수정 -->
+    <update id="update">
+        UPDATE file
+          SET
+          <set>
+            <if test="type != null">
+              type = #{type},
+            </if>
+            <if test="seq != null">
+              seq = #{seq},
+            </if>
+              <if test="parentTable != null">
+                parent_table = #{parentTable},
+              </if>
+              <if test="parentNo != null">
+                parent_no = #{parentNo},
+              </if>
+              <if test="fileName != null">
+                file_name = #{fileName},
+              </if>
+              <if test="originName != null">
+                origin_name = #{originName},
+              </if>
+              <if test="filePath != null">
+                file_path = #{filePath},
+              </if>
+              <if test="fileSize != null">
+                file_size = #{fileSize},
+              </if>
+              updated_at = NOW()
+          </set>
+        WHERE no = #{no}
+    </update>
+
+    <!-- 파일 수정 -->
+    <update id="updateById">
+        UPDATE file
+          SET
+          <set>
+            <if test="type != null">
+              type = #{type},
+            </if>
+            <if test="seq != null">
+              seq = #{seq},
+            </if>
+              <if test="parentTable != null">
+                parent_table = #{parentTable},
+              </if>
+              <if test="parentNo != null">
+                parent_no = #{parentNo},
+              </if>
+              <if test="fileName != null">
+                file_name = #{fileName},
+              </if>
+              <if test="originName != null">
+                origin_name = #{originName},
+              </if>
+              <if test="filePath != null">
+                file_path = #{filePath},
+              </if>
+              <if test="fileSize != null">
+                file_size = #{fileSize},
+              </if>
+              updated_at = NOW()
+          </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 파일 삭제 -->
+    <delete id="delete">
+        DELETE FROM file
+        WHERE no = #{no}
+    </delete>
+
+    <!-- 파일 삭제 -->
+    <delete id="deleteById">
+        DELETE FROM file
+        WHERE id = #{id}
+    </delete>
+
+
+    <!-- 파일 목록 삭제 - 부모 테이블 기준 파일 목록 삭제 -->
+    <delete id="deleteByParent">
+        DELETE FROM file
+        WHERE parent_table = #{parentTable}
+          AND parent_no = #{parentNo}
+    </delete>
+
+    <!-- 선택 삭제 - no -->
+    <!-- 선택 삭제 - id -->
+
+
+    <!-- 게시글 번호 최댓값 -->
+    <select id="maxPk" resultType="int">
+        SELECT MAX(no)
+        FROM file
+    </select>
+</mapper>

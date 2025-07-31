@@ -1,12 +1,20 @@
 import {useEffect, useState} from 'react'
 import styles from './css/Update.module.css'
 import { Link } from 'react-router-dom'
+import DownloadIcon from '@mui/icons-material/Download';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import Checkbox from '@mui/material/Checkbox';
 
-const Update = ({id, board, onUpdate, onDelete}) => {
+const Update = ({id, board, fileList, onUpdate, onDelete, onDownload, deleteCheckedFiles,
+onDeleteFile}) => {
 
   const [title, setTitle] = useState('')
   const [writer, setWriter] = useState('')
   const [content, setContent] = useState('')
+
+  const [fileIdList, setFileIdList] = useState([]) // 선택 삭제 id 목록
+  const [mainFile, setMainFile] = useState(null)
+  const [files, setFiles] = useState(null)
 
   useEffect(() => {
     setTitle(board.title)
@@ -44,6 +52,49 @@ const Update = ({id, board, onUpdate, onDelete}) => {
     if(!check) return
     onDelete(id)
   }
+
+  /* 파일 함수 */
+  // 선택 삭제 핸들러
+  const handleCheckedFileDelete = (id) => {
+    const check = confirm(`선택한 ${fileIdList.length} 개의 파일을 정말로 삭제하시겠습니까?`)
+    if(!check) return
+    deleteCheckedFiles(fileIdList)
+    setFileIdList([])
+  }
+
+  // ✅ 파일 선택 핸들러
+  const checkFileId = id => {
+    console.log(id)
+
+    let checked = false
+    // 체크 여부 확인
+    for(let i = 0; i < fileIdList.length; i++) {
+      const fileId = fileIdList[i];
+      // 체크⭕ -> 체크박스 헤제✅
+      if(fileId == id) {
+        fileIdList.splice(i, 1)
+        checked = true
+      }
+    }
+
+    // 체크❌ -> 체크박스 지정✅
+    if(!checked) {
+      fileIdList.push(id)
+    }
+    console.log(`체크한 아이디 : ${fileIdList}`)
+    setFileIdList(fileIdList)
+  }
+
+  // 파일 삭제 핸들러
+  const handleFileDelete = id => {
+    const check = window.confirm('파일을 삭제하시겠습니까?')
+    if(check) {
+      onDeleteFile(id)
+    }
+  }
+
+
+
   return (
     <div className="container">
       <h1 className="title">게시글 수정</h1>
@@ -66,14 +117,39 @@ const Update = ({id, board, onUpdate, onDelete}) => {
             <textarea onChange={changeContent} rows={10} name="" id="" className={styles['form-input']} value={content}></textarea>
           </td>
         </tr>
+        <tr>
+          <td colSpan={2}>
+            {
+              fileList.map(file => (
+                <div className="flex-box" key={file.id}>
+                  <div className="item">
+                    {/* <input type="checkbox" onChange={() => checkFileId(file.id)}/> */}
+                    <Checkbox onChange={() => checkFileId(file.id)}/>
+                    <div className="item-img">
+                      {file.type == 'MAIN' && <span className="badge">대표</span>}
+                      <img src={`/api/files/img/${file.id}`} alt={file.originName} className="file-img" />
+                    </div>
+                    <span>{file.originName} ({file.fileSize})</span>
+                  </div>
+                  <div className="item">
+                    <button onClick={() => onDownload(file.id, file.originName)} className="btn"><DownloadIcon/></button>
+                    <button onClick={() => handleFileDelete(file.id)} className="btn"><DeleteForeverIcon/></button>
+                  </div>
+                </div>
+              ))
+            }
+          </td>
+        </tr>
       </table>
       <div className="btn-box">
         <div>
           <Link to="/boards" className="btn">목록</Link>
+          <button onClick={handleCheckedFileDelete} className="btn">선택 삭제</button>
         </div>
         <div>
           <button onClick={onSubmit} className="btn">수정</button>
           <button onClick={handleDelete} className="btn">삭제</button>
+
         </div>
       </div>
     </div>
