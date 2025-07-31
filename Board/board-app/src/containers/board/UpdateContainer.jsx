@@ -69,16 +69,23 @@ function UpdateContainer() {
     }
   }
 
-  // 게시글 삭제 요청
+  // 파일 삭제
   const onDeleteFile = async (fileId) => {
     try {
-      const response = await boards.remove(fileId)
-      const result = await response.data
-      alert(result)
-      navigate('/boards')
-    }
-    catch(e) {
-      console.error(e)
+      // 파일 삭제 요청
+      const fileResponse = await files.remove(fileId)
+      console.log(fileResponse.data);
+
+      // 요청 성공 여부 체크
+
+      // 파일 목록 갱신
+      const boardResponse = await boards.select(id)
+      const data = boardResponse.data
+      const fileList = data.fileList
+      setFileList(fileList)
+
+    } catch (error) {
+      console.log(error);
     }
   }
 

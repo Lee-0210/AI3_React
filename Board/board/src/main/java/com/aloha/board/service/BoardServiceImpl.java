@@ -64,31 +64,33 @@ public class BoardServiceImpl implements BoardService {
     int result = 0;
     String pTable = "board";
     Long pNo = entity.getNo();
-    try {
-    List<File> uploadFileList = new ArrayList<>();
-    MultipartFile mainFile = entity.getMainFile();
-    if(mainFile != null && !mainFile.isEmpty()) {
-      File mainFileInfo = new File();
-      mainFileInfo.setParentTable(pTable);
-      mainFileInfo.setParentNo(pNo);
-      mainFileInfo.setData(mainFile);
-      mainFileInfo.setType("MAIN");
-      uploadFileList.add(mainFileInfo);
-    }
 
-    List<MultipartFile> files = entity.getFiles();
-    if(files != null && !files.isEmpty()) {
-      for(MultipartFile multipartFile : files) {
-        if(multipartFile.isEmpty()) {
-          continue;
-        }
-        File fileInfo = new File();
-        fileInfo.setParentTable(pTable);
-        fileInfo.setParentNo(pNo);
-        fileInfo.setData(multipartFile);
-        fileInfo.setType("SUB");
+    try {
+      List<File> uploadFileList = new ArrayList<>();
+      MultipartFile mainFile = entity.getMainFile();
+      if(mainFile != null && !mainFile.isEmpty()) {
+        File mainFileInfo = new File();
+        mainFileInfo.setParentTable(pTable);
+        mainFileInfo.setParentNo(pNo);
+        mainFileInfo.setData(mainFile);
+        mainFileInfo.setType("MAIN");
+        uploadFileList.add(mainFileInfo);
       }
-    }
+
+      List<MultipartFile> files = entity.getFiles();
+      if(files != null && !files.isEmpty()) {
+        for(MultipartFile multipartFile : files) {
+          if(multipartFile.isEmpty()) {
+            continue;
+          }
+          File fileInfo = new File();
+          fileInfo.setParentTable(pTable);
+          fileInfo.setParentNo(pNo);
+          fileInfo.setData(multipartFile);
+          fileInfo.setType("SUB");
+          uploadFileList.add(fileInfo);
+        }
+      }
       result += fileService.upload(uploadFileList);
     } catch(Exception e) {
       log.error("게시글 파일 업로드 중 에러 발생");
@@ -134,19 +136,25 @@ public class BoardServiceImpl implements BoardService {
 
   @Override
   public boolean deleteById(String id) throws Exception {
-    // 게시글 삭제
-    int result = boardMapper.deleteById(id);
-    // 종속된 첨부파일 삭제
-    Board board = boardMapper.selectById(id);
-    Long no = board.getNo();
-    File file = new File();
-    file.setParentTable("board");
-    file.setParentNo(no);
-    boolean deleteCount = fileService.deleteByParent(file);
-    if(deleteCount)
-      log.info("파일이 전부 삭제되었습니다.");
+      // 삭제 전 게시글 조회
+      Board board = boardMapper.selectById(id);
+      if (board == null) {
+          return false;
+      }
+      Long no = board.getNo();
 
-    return result > 0;
+      // 게시글 삭제
+      int result = boardMapper.deleteById(id);
+
+      // 종속된 첨부파일 삭제
+      File file = new File();
+      file.setParentTable("board");
+      file.setParentNo(no);
+      boolean deleteCount = fileService.deleteByParent(file);
+      if(deleteCount)
+          log.info("파일이 전부 삭제되었습니다.");
+
+      return result > 0;
   }
 
 }

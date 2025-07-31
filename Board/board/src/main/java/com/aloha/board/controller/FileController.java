@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
@@ -137,7 +136,7 @@ public class FileController {
   @GetMapping("/img/{id}")
   public void thumbnailImg(@PathVariable("id") String id, HttpServletResponse response) throws Exception {
     File file = fileService.selectById(id);
-    String filePath = file != null ? file.getFileName() : null;
+    String filePath = file != null ? file.getFilePath() : null;
 
     java.io.File imgFile;
     // 파일 경로가 null 또는 파일이 존재하지 않는 경우 -> no-img

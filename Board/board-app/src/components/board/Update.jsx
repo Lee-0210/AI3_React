@@ -17,9 +17,11 @@ onDeleteFile}) => {
   const [files, setFiles] = useState(null)
 
   useEffect(() => {
-    setTitle(board.title)
-    setWriter(board.writer)
-    setContent(board.content)
+    if( board ) {
+      setTitle(board.title)
+      setWriter(board.writer)
+      setContent(board.content)
+    }
   }, [board])
 
   // state 변경 함수
@@ -57,9 +59,10 @@ onDeleteFile}) => {
   // 선택 삭제 핸들러
   const handleCheckedFileDelete = (id) => {
     const check = confirm(`선택한 ${fileIdList.length} 개의 파일을 정말로 삭제하시겠습니까?`)
-    if(!check) return
-    deleteCheckedFiles(fileIdList)
-    setFileIdList([])
+    if(check) {
+      deleteCheckedFiles(fileIdList)
+      setFileIdList([])
+    }
   }
 
   // ✅ 파일 선택 핸들러

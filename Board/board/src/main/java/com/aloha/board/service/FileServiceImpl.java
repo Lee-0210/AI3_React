@@ -176,13 +176,13 @@ public class FileServiceImpl implements FileService {
     // - Content-Disposition  : attachment; filename="파일명.확장자"
     fileName = URLEncoder.encode(fileName, "UTF-8");
     response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-    response.setHeader("Content-Dispostion", "attachment; filename=\"" + fileName + " \"");
+    response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 
     // 다운로드
-    boolean result = FileCopyUtils.copy(fis, sos) > 0;
+    FileCopyUtils.copy(fis, sos);
     fis.close();
     sos.close();
-    return result;
+    return true;
   }
 
   @Override
