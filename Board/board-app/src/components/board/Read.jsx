@@ -1,6 +1,10 @@
 import {useState} from 'react'
 import { Link, useParams } from 'react-router-dom'
 import styles from './css/Read.module.css'
+import DownloadIcon from '@mui/icons-material/Download';
+// ckeditor5
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 const Read = ({board, fileList, onDownload}) => {
 
@@ -31,7 +35,15 @@ const Read = ({board, fileList, onDownload}) => {
         <tr>
           <th>내용</th>
           <td colSpan={2}>
-            <textarea  rows={10} name="" id="" className={styles['form-input']} defaultValue={board.content ?? ''} readOnly></textarea>
+            {/* <textarea  rows={10} name="" id="" className={styles['form-input']} defaultValue={board.content ?? ''} readOnly></textarea> */}
+            <CKEditor
+              editor={ ClassicEditor }
+              data={ board.content }           // 조회할 데이터 컨텐츠
+              disabled={true}
+              config={{
+                  toolbar: [],
+              }}
+            />
           </td>
         </tr>
         <tr>
@@ -47,7 +59,7 @@ const Read = ({board, fileList, onDownload}) => {
                     <span>{file.originName} ({file.fileSize})</span>
                   </div>
                   <div className="item">
-                    <button onClick={() => onDownload(file.id, file.originName)} className="btn">다운로드</button>
+                    <button onClick={() => onDownload(file.id, file.originName)} className="btn"><DownloadIcon/></button>
                   </div>
                 </div>
               ))

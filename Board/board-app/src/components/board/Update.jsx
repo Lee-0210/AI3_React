@@ -4,6 +4,10 @@ import { Link } from 'react-router-dom'
 import DownloadIcon from '@mui/icons-material/Download';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Checkbox from '@mui/material/Checkbox';
+import * as fileApi from '../../apis/files';
+// ckeditor5
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 const Update = ({id, board, fileList, onUpdate, onDelete, onDownload, deleteCheckedFiles,
 onDeleteFile}) => {
@@ -96,6 +100,46 @@ onDeleteFile}) => {
     }
   }
 
+  const customUploadAdapter = (loader) => {
+    return {
+      upload() {
+        return new Promise( (resolve, reject) => {
+          const formData = new FormData();
+          loader.file.then( async (file) => {
+            console.log(`파일 : ${file}`);
+            formData.append("parentTable", 'editor');
+            formData.append("parentNo", 0)
+            formData.append("type", 'SUB')
+            formData.append("seq", 0)
+            formData.append("data", file);
+
+            const headers = {
+                headers: {
+                    'Content-Type' : 'multipart/form-data',
+                },
+            };
+
+            let response = await fileApi.upload(formData, headers);
+            let data = await response.data;
+            console.log(`데이터 : ${data}`);
+
+            // 이미지 렌더링
+            await resolve({
+                default: `/api/files/img/${data}`
+            })
+          });
+        });
+      },
+    };
+  };
+
+  // CKEditor 이미지 업로드
+  function uploadPlugin(editor) {
+    editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
+      return customUploadAdapter(loader);
+    };
+  }
+
 
 
   return (
@@ -117,7 +161,49 @@ onDeleteFile}) => {
         <tr>
           <th>내용</th>
           <td colSpan={2}>
-            <textarea onChange={changeContent} rows={10} name="" id="" className={styles['form-input']} value={content}></textarea>
+            {/* <textarea onChange={changeContent} rows={10} name="" id="" className={styles['form-input']} value={content}></textarea> */}
+            <CKEditor
+              editor={ ClassicEditor }
+              config={{
+                  placeholder: "내용을 입력하세요.",
+                  toolbar: {
+                      items: [
+                          'undo', 'redo',
+                          '|', 'heading',
+                          '|', 'fontfamily', 'fontsize', 'fontColor', 'fontBackgroundColor',
+                          '|', 'bold', 'italic', 'strikethrough', 'subscript', 'superscript', 'code',
+                          '|', 'bulletedList', 'numberedList', 'todoList', 'outdent', 'indent',
+                          '|', 'link', 'uploadImage', 'blockQuote', 'codeBlock',
+                          '|', 'mediaEmbed',
+                      ],
+                      shouldNotGroupWhenFull: false
+                  },
+                  editorConfig: {
+                      height: 500, // Set the desired height in pixels
+                  },
+                  alignment: {
+                      options: ['left', 'center', 'right', 'justify'],
+                  },
+
+                  extraPlugins: [uploadPlugin]            // 업로드 플러그인
+              }}
+              data={ board.content }           // ⭐ 기존 컨텐츠 내용 입력 (HTML)
+              onReady={ editor => {
+                  // You can store the "editor" and use when it is needed.
+                  console.log( 'Editor is ready to use!', editor );
+              } }
+              onChange={ ( event, editor ) => {
+                  const data = editor.getData();
+                  console.log( { event, editor, data } );
+                  setContent(data);
+              } }
+              onBlur={ ( event, editor ) => {
+                  // console.log( 'Blur.', editor );
+              } }
+              onFocus={ ( event, editor ) => {
+                  // console.log( 'Focus.', editor );
+              } }
+            />
           </td>
         </tr>
         <tr>

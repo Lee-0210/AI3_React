@@ -40,7 +40,7 @@
   </select>
 
   <!-- 자동증가된(AI) board 의 no 를 Board 객체의 no 변수에 넣어준다. -->
-  <insert id="insert" useGeneratedKeys="true" keyProperty="no">
+  <insert id="insert" parameterType="Board" useGeneratedKeys="true" keyProperty="no">
     INSERT INTO board (id, title, writer, content)
     VALUES (#{id}, #{title}, #{writer}, #{content})
   </insert>

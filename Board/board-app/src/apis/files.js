@@ -1,7 +1,11 @@
 import axios from 'axios'
+axios.defaults.baseURL = '/api'
+
+// 업로드
+export const upload = (data, header) => axios.post(`/files`, data, header)
 
 // 다운로드
-export const download = id => axios.get(`files/download/${id}`, {responseType: 'blob'})
+export const download = id => axios.get(`/files/download/${id}`, {responseType: 'blob'})
 
 // 파일 삭제
 export const remove = id => axios.delete(`/files/${id}`)

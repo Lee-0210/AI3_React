@@ -63,7 +63,9 @@ const List = ({list, pagination}) => {
               list.map(board => {
                 return (
                   <tr>
-                    <td>{board.no}</td>
+                    <td>
+                      <Link to={`/boards/${board.id}`}>{board.no}</Link>
+                    </td>
                     <td>
                       {
                         board.file == null

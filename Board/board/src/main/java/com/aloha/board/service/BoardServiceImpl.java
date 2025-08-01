@@ -56,7 +56,7 @@ public class BoardServiceImpl implements BoardService {
     // 파일 업로드
     result += upload(entity);
 
-    return result > 1;
+    return result > 0;
   }
 
   // 파일 업로드

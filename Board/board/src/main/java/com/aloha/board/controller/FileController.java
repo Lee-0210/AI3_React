@@ -60,12 +60,25 @@ public class FileController {
       }
   }
 
-  @PostMapping()
-  public ResponseEntity<?> create(@RequestBody File file) {
+  @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<?> createFormData(File file) {
       try {
-          boolean result = fileService.insert(file);
+          boolean result = fileService.upload(file);
           if(result)
-            return new ResponseEntity<>("SUCCESS", HttpStatus.CREATED);
+            return new ResponseEntity<>(file.getId(), HttpStatus.CREATED);
+          else
+            return new ResponseEntity<>("FAIL", HttpStatus.BAD_REQUEST);
+      } catch (Exception e) {
+          return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+  }
+
+  @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> createJSON(@RequestBody File file) {
+      try {
+          boolean result = fileService.upload(file);
+          if(result)
+            return new ResponseEntity<>(file, HttpStatus.CREATED);
           else
             return new ResponseEntity<>("FAIL", HttpStatus.BAD_REQUEST);
       } catch (Exception e) {
@@ -137,7 +150,8 @@ public class FileController {
   public void thumbnailImg(@PathVariable("id") String id, HttpServletResponse response) throws Exception {
     File file = fileService.selectById(id);
     String filePath = file != null ? file.getFilePath() : null;
-
+    log.info("########### file : {}", file);
+    log.info("########### filePath : {}", filePath);
     java.io.File imgFile;
     // 파일 경로가 null 또는 파일이 존재하지 않는 경우 -> no-img
     // org.springframework.cor.io.Resource
