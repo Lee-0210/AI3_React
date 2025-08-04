@@ -1,0 +1,17 @@
+.container {
+  width: 1024px;
+  margin: 50px auto;
+}
+hr { margin-bottom: 50px; }
+
+.btn, .btn:link, .btn:visited {
+  display: inline-block;
+  text-decoration: none;
+  font: 20px;
+  font-weight: 800;
+  bottom: none;
+  border-radius: 9px;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+}

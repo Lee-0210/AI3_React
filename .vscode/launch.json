@@ -19,6 +19,26 @@
       "projectName": "board",
       "args": "",
       "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-LoginApplication<login-login2>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.aloha.login.LoginApplication",
+      "projectName": "login-login2",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-LoginApplication<login>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.aloha.login.LoginApplication",
+      "projectName": "login",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
     }
   ]
 }
