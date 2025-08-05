@@ -95,7 +95,7 @@ public class LoginController {
    */
   @GetMapping("/user")
   public ResponseEntity<?> user(@RequestHeader(name = "Authorization") String authorization) {
-      log.info("Authrization : " + authorization);
+      log.info("Authorization : " + authorization);
 
       // Authrization : "Bearer " + 💍(jwt)
       String jwt = authorization.substring(7);
