@@ -81,6 +81,7 @@ const LoginContextProvider = ({children}) => {
     setIsLogin(true)
     localStorage.setItem("isLogin", "true")
     // 사용자 정보
+    setUserInfo(data)
     localStorage.setItem("userInfo", JSON.stringify(data))
     // 권한 정보
     const updateRoles = {isUser: false, isAdmin: false}
