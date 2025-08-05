@@ -39,6 +39,16 @@
       "projectName": "login",
       "args": "",
       "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-TodoApplication<todo-todolist>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.test.todo.TodoApplication",
+      "projectName": "todo-todolist",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
     }
   ]
 }

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.test.todo.mapper.TodoMapper">
+
+  <!-- 정렬 후 페이징 하면, 완료 안 된 것만 앞으로 나오니까 페이징 후 정렬을 적용합니다. -->
+
+  <!-- 미완료 조회 -->
+  <select id="list" resultType="Todos">
+    SELECT * FROM todos WHERE status = 0 ORDER BY created_at DESC
+  </select>
+
+  <!-- 완료 조회 -->
+  <select id="listDone" resultType="Todos">
+    SELECT * FROM todos WHERE status = 1 ORDER BY updated_at DESC
+  </select>
+
+  <select id="select" resultType="Todos">
+    SELECT * FROM todos WHERE no = #{no}
+  </select>
+
+  <select id="selectById" resultType="Todos">
+    SELECT * FROM todos WHERE id = #{id}
+  </select>
+
+  <insert id="insert">
+    INSERT INTO todos (id, name, seq)
+    VALUES (#{id}, #{name}, #{seq})
+  </insert>
+
+  <update id="update">
+    UPDATE todos
+    <set>
+      <if test="name != null">
+        name = #{name}
+      </if>
+      <if test="status != null">
+        status = #{status}
+      </if>
+      <if test="seq != null">
+        seq = #{seq}
+      </if>
+    </set>
+    WHERE no = #{no}
+  </update>
+
+  <update id="updateById">
+    UPDATE todos
+    <set>
+      <if test="name != null">
+        name = #{name},
+      </if>
+      <if test="status != null">
+        status = #{status},
+      </if>
+      <if test="seq != null">
+        seq = #{seq},
+      </if>
+    </set>
+    WHERE id = #{id}
+  </update>
+
+  <delete id="delete">
+    DELETE FROM todos WHERE no = #{no}
+  </delete>
+
+  <delete id="deleteById">
+    DELETE FROM todos WHERE id = #{id}
+  </delete>
+
+  <!-- 전체 완료 -->
+  <update id="completeAll">
+    UPDATE todos
+    SET status = 1
+  </update>
+
+  <!-- 전체 삭제 -->
+  <delete id="deleteAll">
+    DELETE FROM todos
+  </delete>
+
+
+</mapper>
